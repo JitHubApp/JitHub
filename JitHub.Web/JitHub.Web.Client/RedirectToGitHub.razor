@@ -1,0 +1,17 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+<h3>Authenticate</h3>
+
+@code {
+    [Parameter]
+    public Uri? OauthLoginUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (OauthLoginUrl is not null)
+        {
+            NavigationManager.NavigateTo(OauthLoginUrl.AbsoluteUri);
+        }
+    }
+}

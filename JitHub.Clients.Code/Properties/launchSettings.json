@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "JitHub.Clients.Code (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "JitHub.Clients.Code (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

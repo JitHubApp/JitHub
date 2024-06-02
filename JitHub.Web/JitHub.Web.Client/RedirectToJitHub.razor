@@ -1,0 +1,17 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+<h3>RedirectToJitHub</h3>
+
+@code {
+    [Parameter]
+    public string? Token { get; set; }
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrWhiteSpace(Token))
+        {
+            return;
+        }
+        NavigationManager.NavigateTo($"githubservicetest://auth?token={Token}");
+    }
+}

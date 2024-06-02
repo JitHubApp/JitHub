@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "JitHub.Client.GitHubServiceTest (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "JitHub.Client.GitHubServiceTest (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

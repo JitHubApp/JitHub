@@ -1,0 +1,27 @@
+﻿@page "/authenticate"
+@using Octokit
+@inject IConfiguration Configuration
+
+<h3>Authenticate</h3>
+
+@if(oauthLoginUrl is not null)
+{
+    <RedirectToGitHub OauthLoginUrl="oauthLoginUrl"/>
+}
+
+@code {
+    private Uri? oauthLoginUrl;
+    protected override void OnInitialized()
+    {
+        string clientId = Configuration["JithubClientId"];
+
+        OauthLoginRequest request = new OauthLoginRequest(clientId)
+            {
+                Scopes = { "user", "repo", "delete_repo" },
+            };
+
+        
+        var github = new GitHubClient(new ProductHeaderValue("JitHubV2"));
+        oauthLoginUrl = github.Oauth.GetGitHubLoginUrl(request);
+    }
+}

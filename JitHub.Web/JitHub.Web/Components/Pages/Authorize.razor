@@ -1,0 +1,74 @@
+﻿@page "/authorize"
+@using Octokit
+@inject IConfiguration Configuration
+
+<p>Authorizing...</p>
+
+@if (_token is not null)
+{
+    <RedirectToJitHub Token="@_token"/>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Code { get; set; }
+
+    private string? _token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTokenFromCode();
+    }
+
+    public async Task GetTokenFromCode()
+    {
+        if (string.IsNullOrWhiteSpace(Code))
+        {
+            return;
+        }
+        try
+        {
+            var token = await Detokenize(Code);
+            _token = token.AccessToken;
+            StateHasChanged();
+        }
+
+        catch (Exception ex)
+        {
+        }
+    }
+
+    public async Task<OauthToken> Detokenize(string code)
+    {
+        string clientId = Configuration["JithubClientId"];
+        string appSecret = Configuration["JithubAppSecret"];
+
+        if (clientId == null)
+        {
+            throw new Exception("Missing client information");
+        }
+
+        if (appSecret == null)
+        {
+            throw new Exception("Missing app secret");
+        }
+
+        OauthToken token;
+        try
+        {
+            var request = new OauthTokenRequest(clientId, appSecret, code);
+            var gitHubClient = new GitHubClient(new ProductHeaderValue("JitHubV2"));
+            token = await gitHubClient.Oauth.CreateAccessToken(request);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Github request error");
+        }
+
+        if (token == null || string.IsNullOrWhiteSpace(token.AccessToken) || !string.IsNullOrWhiteSpace(token.Error))
+        {
+            throw new Exception($"Github returned missing token information");
+        }
+        return token;
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "JitHub.Clients.AIServiceText (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "JitHub.Clients.AIServiceText (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

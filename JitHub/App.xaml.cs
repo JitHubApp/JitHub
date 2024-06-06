@@ -1,72 +1,102 @@
-﻿using Microsoft.UI;
-using Microsoft.UI.Windowing;
+﻿using ABI.System;
+using JitHub.Services.Accounts;
+using JitHub.Services.AI;
+using JitHub.Services.Common;
+using JitHub.Services.GitHub;
+using JitHub.Services.Interfaces;
+using Microsoft.ApplicationInsights.WorkerService;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
+using Microsoft.Windows.AppLifecycle;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
+using System.Web;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using WinUIEx;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
-namespace JitHub
+namespace JitHub;
+public partial class App : Application
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+    public IServiceProvider ServiceProvider { get; private set; }
+    public App()
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
+        ServiceProvider = RegisterServices();
+    }
 
-        public void FocusMainWindow()
+    private IServiceProvider RegisterServices()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging(loggingBuilder => loggingBuilder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>("Category", LogLevel.Information));
+        services.AddApplicationInsightsTelemetryWorkerService((ApplicationInsightsServiceOptions options) => options.ConnectionString = "InstrumentationKey=a6ae7767-cb9e-4394-ae9e-e71a3b815df7;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/;ApplicationId=69a80d62-b1fb-4c02-9a1b-b979cd72a297");
+
+        services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IAccountService, LocalAccountService>();
+        services.AddSingleton<IGitHubService, GitHubService>();
+        services.AddScoped<LocalSLMService>();
+
+        return services.BuildServiceProvider();
+    }
+
+    public void FocusMainWindow()
+    {
+        if (m_window != null)
         {
-            if (m_window != null)
+            try
             {
-                try
+                var dispatcherQueue = m_window.DispatcherQueue;
+                dispatcherQueue.TryEnqueue(() =>
                 {
-                    var dispatcherQueue = m_window.DispatcherQueue;
-                    dispatcherQueue.TryEnqueue(() =>
-                    {
-                        m_window.BringToFront();
-                    });
-                }
-                catch(Exception e)
-                {
-                }
+                    m_window.BringToFront();
+                });
+            }
+            catch(System.Exception e)
+            {
             }
         }
+    }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        if (m_window == null)
         {
             m_window = new MainWindow();
-            m_window.Activate();
+        }
+        m_window.Activate();
+        var authenticated = false;
+        var activatedEventArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
+        if (activatedEventArgs.Kind == ExtendedActivationKind.Protocol && activatedEventArgs.Data is ProtocolActivatedEventArgs protocolArgs)
+        {
+            var query = protocolArgs.Uri.Query;
+            var queryParameters = HttpUtility.ParseQueryString(query);
+
+            // Access individual parameters by key
+            string token = queryParameters["token"];
+            string clientId = queryParameters["clientId"];
+            string userId = queryParameters["userId"];
+            int userIdVal;
+            int.TryParse(userId, out userIdVal);
+
+            var accountService = ServiceProvider.GetService<IAccountService>();
+            authenticated = accountService.Authorize(token, clientId, userIdVal);
+        }
+        else
+        {
+            var accountService = ServiceProvider.GetService<IAccountService>();
+            authenticated = accountService.Authenticated;
         }
 
-        private WindowEx m_window;
+        if (authenticated)
+        {
+            var navigationService = ServiceProvider.GetService<INavigationService>();
+            navigationService.GoHome();
+        }
+        else
+        {
+            // go to login page
+        }
     }
+
+    private WindowEx m_window;
 }

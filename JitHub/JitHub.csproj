@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -42,6 +42,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Pages\ShellPage.xaml" />
+	</ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -54,7 +57,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240428000" />
     <PackageReference Include="WinUIEx" Version="2.3.4" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -67,6 +72,18 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JitHub.Services.Accounts\JitHub.Services.Accounts.csproj" />
+    <ProjectReference Include="..\JitHub.Services.AI\JitHub.Services.AI.csproj" />
+    <ProjectReference Include="..\JitHub.Services.Common\JitHub.Services.Common.csproj" />
+    <ProjectReference Include="..\JitHub.Services.GitHubService\JitHub.Services.GitHub.csproj" />
+    <ProjectReference Include="..\JitHub.Services.Interfaces\JitHub.Services.Interfaces.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\ShellPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--

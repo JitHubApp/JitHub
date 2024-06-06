@@ -1,4 +1,5 @@
-﻿using Octokit.GraphQL;
+﻿using JitHub.Services.Interfaces;
+using Octokit.GraphQL;
 using static Octokit.GraphQL.Variable;
 
 namespace JitHub.Services.GitHub;

@@ -1,4 +1,4 @@
-﻿namespace JitHub.Services.GitHub;
+﻿namespace JitHub.Services.Interfaces;
 
 public interface IGitHubService
 {

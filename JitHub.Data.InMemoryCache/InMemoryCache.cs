@@ -1,4 +1,4 @@
-﻿using JitHub.Services.GitHub;
+﻿using JitHub.Services.Interfaces;
 
 namespace JitHub.Data.Caching;
 

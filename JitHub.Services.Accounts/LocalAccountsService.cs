@@ -21,6 +21,7 @@ public partial class LocalAccountService : ObservableObject, IAccountService
     {
         _settingsService = settingsService;
         _navigationService = navigationService;
+        _passwordVault = new PasswordVault();
         Authenticated = CheckAuth(GetUser());
     }
 

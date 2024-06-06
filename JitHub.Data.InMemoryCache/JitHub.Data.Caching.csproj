@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JitHub.Services.GitHubService\JitHub.Services.GitHub.csproj" />
+    <ProjectReference Include="..\JitHub.Services.Interfaces\JitHub.Services.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

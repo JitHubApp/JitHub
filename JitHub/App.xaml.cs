@@ -1,4 +1,5 @@
 ﻿using ABI.System;
+using JitHub.Pages;
 using JitHub.Services.Accounts;
 using JitHub.Services.AI;
 using JitHub.Services.Common;
@@ -64,6 +65,9 @@ public partial class App : Application
             m_window = new MainWindow();
         }
         m_window.Activate();
+        var navigationService = ServiceProvider.GetService<INavigationService>();
+        ((NavigationService)navigationService).Init(((MainWindow)m_window).GetRootFrame());
+
         var authenticated = false;
         var activatedEventArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
         if (activatedEventArgs.Kind == ExtendedActivationKind.Protocol && activatedEventArgs.Data is ProtocolActivatedEventArgs protocolArgs)
@@ -89,12 +93,12 @@ public partial class App : Application
 
         if (authenticated)
         {
-            var navigationService = ServiceProvider.GetService<INavigationService>();
-            navigationService.GoHome();
+
+            navigationService.NavigateTo("Home", typeof(ShellPage));
         }
         else
         {
-            // go to login page
+            navigationService.NavigateTo("Login", typeof(LoginPage));
         }
     }
 

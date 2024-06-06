@@ -1,22 +1,22 @@
 ﻿using JitHub.Services.Interfaces;
+using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JitHub.Services.Common;
 
 public class NavigationService : INavigationService
 {
-    public void GoHome()
+    private Frame _rootFrame;
+
+    public void Init(Frame rootFrame)
     {
-        throw new NotImplementedException();
+        _rootFrame = rootFrame;
     }
 
     public void NavigateTo(string title, Type page)
     {
-        throw new NotImplementedException();
+        // TODO: do something with the title
+        _rootFrame.Navigate(page);
     }
 
     public void NavigateTo(string title, Type page, object parameter)

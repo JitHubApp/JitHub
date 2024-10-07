@@ -7,9 +7,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Grid
+        Padding="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-        <TextBlock x:Name="ChatText"/>
-    </StackPanel>
+        <Grid
+            Grid.Row="0">
+            <TextBlock TextWrapping="Wrap" Width="512" x:Name="ChatText"/>
+        </Grid>
+        <Grid
+            Grid.Row="1">
+            <TextBox x:Name="PromptBox" AcceptsReturn="True" KeyUp="PromptBox_KeyUp"/>
+        </Grid>
+    </Grid>
 </Window>

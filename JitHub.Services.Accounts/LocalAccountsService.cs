@@ -22,7 +22,11 @@ public partial class LocalAccountService : ObservableObject, IAccountService
         _settingsService = settingsService;
         _navigationService = navigationService;
         _passwordVault = new PasswordVault();
-        Authenticated = CheckAuth(GetUser());
+        var userId = GetUser();
+        if (userId != 0)
+        {
+            Authenticated = CheckAuth(userId);
+        }
     }
 
     public void RemoveUser()
@@ -101,7 +105,7 @@ public partial class LocalAccountService : ObservableObject, IAccountService
     {
         using var httpClient = new HttpClient();
         // TODO: This is temp URL, need to change to config
-        var url = $"https://localhost:7040/authenticate?scope={string.Join(';', scopes)}";
+        var url = $"https://localhost:7040/authenticate?scopes={string.Join(';', scopes)}";
         await Windows.System.Launcher.LaunchUriAsync(new(url));
     }
 }

@@ -6,10 +6,16 @@
     xmlns:local="using:JitHub.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:JitHub.ViewModels"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.DataContext>
+        <viewmodels:LoginPageViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
     <Grid>
-        <TextBlock Text="Login"/>
+        <Button Content="Login" Style="{ThemeResource AccentButtonStyle}" Command="{x:Bind ViewModel.LoginCommand, Mode=OneWay}"/>
     </Grid>
+
 </Page>

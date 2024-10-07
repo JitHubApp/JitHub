@@ -57,7 +57,7 @@
         try
         {
             var request = new OauthTokenRequest(clientId, appSecret, code);
-            var gitHubClient = new GitHubClient(new ProductHeaderValue("JitHubV2"));
+            var gitHubClient = new GitHubClient(new ProductHeaderValue("JitHubV3"));
             token = await gitHubClient.Oauth.CreateAccessToken(request);
         }
         catch (Exception ex)

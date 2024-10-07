@@ -33,14 +33,26 @@ public sealed partial class MainWindow : Window
         });   
     }
 
-    private void myButton_Click(object sender, RoutedEventArgs e)
+    private void PromptBox_KeyUp(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
     {
-        Task.Run(() =>
+        var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
+        if (ctrlState.HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down) && e.Key == Windows.System.VirtualKey.Enter)
         {
-            _aiService.SetModelPath(SLMName.PHI3_MINI_4K, "E:\\\\Phi-3-mini-4k-instruct-onnx\\\\directml\\\\directml-int4-awq-block-128");
-            using var session = _aiService.LoadModel(SLMName.PHI3_MINI_4K);
-            session.WriteNextToken = AppendText;
-            session.Complete("Explain to me the context of the programming language python.");
-        });
+            e.Handled = true;
+            if (string.IsNullOrWhiteSpace(PromptBox.Text))
+            {
+                return;
+            }
+            ChatText.Text = "";
+            var prompt = PromptBox.Text;
+            PromptBox.Text = "";
+            Task.Run(() =>
+            {
+                _aiService.SetModelPath(SLMName.PHI3_MINI_4K, "E:\\\\Phi-3-mini-4k-instruct-onnx\\\\directml\\\\directml-int4-awq-block-128");
+                using var session = _aiService.LoadModel(SLMName.PHI3_MINI_4K);
+                session.WriteNextToken = AppendText;
+                session.Complete(prompt);
+            });
+        }
     }
 }

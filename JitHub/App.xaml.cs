@@ -99,7 +99,9 @@ public partial class App : Application
         else
         {
             navigationService.NavigateTo("Login", typeof(LoginPage));
+            Console.WriteLine("Not authenticated");
         }
+        navigationService.NavigateTo("Home", typeof(LoginPage));
     }
 
     private WindowEx m_window;

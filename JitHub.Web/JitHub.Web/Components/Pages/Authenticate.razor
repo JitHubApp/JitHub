@@ -1,5 +1,6 @@
 ﻿@page "/authenticate"
 @using Octokit
+@using System.Collections.ObjectModel
 @inject IConfiguration Configuration
 
 <h3>Authenticate</h3>
@@ -11,17 +12,21 @@
 
 @code {
     private Uri? oauthLoginUrl;
+
+    [SupplyParameterFromQuery]
+    public string? Scopes { get; set; }
+
     protected override void OnInitialized()
     {
         string clientId = Configuration["JithubClientId"];
+        OauthLoginRequest request = new OauthLoginRequest(clientId);
+        Collection<string> scopes = new();
+        foreach (var scope in Scopes?.Split(':'))
+        {
+            request.Scopes.Add(scope);
+        }
 
-        OauthLoginRequest request = new OauthLoginRequest(clientId)
-            {
-                Scopes = { "user", "repo", "delete_repo" },
-            };
-
-        
-        var github = new GitHubClient(new ProductHeaderValue("JitHubV2"));
+        var github = new GitHubClient(new ProductHeaderValue("JitHubV3"));
         oauthLoginUrl = github.Oauth.GetGitHubLoginUrl(request);
     }
 }

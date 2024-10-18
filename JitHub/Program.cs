@@ -53,7 +53,7 @@ namespace JitHub
             ExtendedActivationKind kind = args.Kind;
             if (_instance != null)
             {
-                _instance.FocusMainWindow();
+                _instance.FocusMainWindowWithArguments(args);
             }
         }
     }

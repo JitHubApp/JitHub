@@ -6,12 +6,16 @@
 @code {
     [Parameter]
     public string? Token { get; set; }
+    [Parameter]
+    public string? ClientId { get; set; }
+    [Parameter]
+    public long? UserId { get; set; }
     protected override void OnInitialized()
     {
-        if (string.IsNullOrWhiteSpace(Token))
+        if (string.IsNullOrWhiteSpace(Token) || string.IsNullOrWhiteSpace(ClientId) || UserId is null)
         {
             return;
         }
-        NavigationManager.NavigateTo($"githubservicetest://auth?token={Token}");
+        NavigationManager.NavigateTo($"jithub://auth?token={Token}&clientId={ClientId}&userId={UserId}");
     }
 }

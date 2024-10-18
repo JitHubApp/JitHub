@@ -4,11 +4,11 @@ public interface IAccountService
 {
     bool Authenticated { get; set; }
     void RemoveUser();
-    void SaveUser(int userId);
-    int GetUser();
+    void SaveUser(long userId);
+    long GetUser();
     Task Authenticate(IEnumerable<string> scopes);
-    public bool Authorize(string token, string clientId, int userId);
-    string GetToken(int userId);
-    bool CheckAuth(int userId);
+    public bool Authorize(string token, string clientId, long userId);
+    string GetToken(long userId);
+    bool CheckAuth(long userId);
     void SignOut();
 }

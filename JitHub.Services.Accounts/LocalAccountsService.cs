@@ -34,18 +34,18 @@ public partial class LocalAccountService : ObservableObject, IAccountService
         _settingsService.Save(userIdKey, string.Empty);
     }
 
-    public void SaveUser(int userId)
+    public void SaveUser(long userId)
     {
         _settingsService.Save(userIdKey, userId);
         _settingsService.Save(doNotWarnDeleteRepoKey, false);
     }
 
-    public int GetUser()
+    public long GetUser()
     {
-        return _settingsService.Get<int>(userIdKey);
+        return _settingsService.Get<long>(userIdKey);
     }
 
-    public bool Authorize(string token, string clientId, int userId)
+    public bool Authorize(string token, string clientId, long userId)
     {
         try
         {
@@ -60,7 +60,7 @@ public partial class LocalAccountService : ObservableObject, IAccountService
         return Authenticated;
     }
 
-    public bool CheckAuth(int userId)
+    public bool CheckAuth(long userId)
     {
         try
         {
@@ -73,7 +73,7 @@ public partial class LocalAccountService : ObservableObject, IAccountService
         }
     }
 
-    public string GetToken(int userId)
+    public string GetToken(long userId)
     {
         try
         {

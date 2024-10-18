@@ -58,18 +58,19 @@ public partial class App : Application
         }
     }
 
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    public void FocusMainWindowWithArguments(AppActivationArguments args)
     {
-        if (m_window == null)
-        {
-            m_window = new MainWindow();
-        }
-        m_window.Activate();
+        FocusMainWindow();
+        HandleActivation(args);
+    }
+
+    private void HandleActivation(AppActivationArguments activatedEventArgs)
+    {
         var navigationService = ServiceProvider.GetService<INavigationService>();
         ((NavigationService)navigationService).Init(((MainWindow)m_window).GetRootFrame());
 
         var authenticated = false;
-        var activatedEventArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
+        
         if (activatedEventArgs.Kind == ExtendedActivationKind.Protocol && activatedEventArgs.Data is ProtocolActivatedEventArgs protocolArgs)
         {
             var query = protocolArgs.Uri.Query;
@@ -79,8 +80,8 @@ public partial class App : Application
             string token = queryParameters["token"];
             string clientId = queryParameters["clientId"];
             string userId = queryParameters["userId"];
-            int userIdVal;
-            int.TryParse(userId, out userIdVal);
+            long userIdVal;
+            long.TryParse(userId, out userIdVal);
 
             var accountService = ServiceProvider.GetService<IAccountService>();
             authenticated = accountService.Authorize(token, clientId, userIdVal);
@@ -91,17 +92,32 @@ public partial class App : Application
             authenticated = accountService.Authenticated;
         }
 
+        var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
+
         if (authenticated)
         {
-
-            navigationService.NavigateTo("Home", typeof(ShellPage));
+            dispatcherQueue.TryEnqueue(() => {
+                navigationService.NavigateTo("Home", typeof(ShellPage));
+            });
         }
         else
         {
-            navigationService.NavigateTo("Login", typeof(LoginPage));
-            Console.WriteLine("Not authenticated");
+            dispatcherQueue.TryEnqueue(() => {
+                navigationService.NavigateTo("Login", typeof(LoginPage));
+            });
         }
-        navigationService.NavigateTo("Home", typeof(LoginPage));
+    }
+
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        if (m_window == null)
+        {
+            m_window = new MainWindow();
+        }
+        m_window.Activate();
+        var activatedEventArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
+        HandleActivation(activatedEventArgs);
     }
 
     private WindowEx m_window;

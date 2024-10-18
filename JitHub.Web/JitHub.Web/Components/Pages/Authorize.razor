@@ -4,9 +4,9 @@
 
 <p>Authorizing...</p>
 
-@if (_token is not null)
+@if (_token is not null && _userId is not null && _clientId is not null)
 {
-    <RedirectToJitHub Token="@_token"/>
+    <RedirectToJitHub Token="@_token" UserId="@_userId" ClientId="@_clientId"/>
 }
 
 @code {
@@ -14,9 +14,12 @@
     public string? Code { get; set; }
 
     private string? _token { get; set; }
+    private long? _userId { get; set; }
+    private string? _clientId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        _clientId = Configuration["JithubClientId"];
         await GetTokenFromCode();
     }
 
@@ -40,10 +43,9 @@
 
     public async Task<OauthToken> Detokenize(string code)
     {
-        string clientId = Configuration["JithubClientId"];
         string appSecret = Configuration["JithubAppSecret"];
 
-        if (clientId == null)
+        if (_clientId == null)
         {
             throw new Exception("Missing client information");
         }
@@ -56,9 +58,12 @@
         OauthToken token;
         try
         {
-            var request = new OauthTokenRequest(clientId, appSecret, code);
+            var request = new OauthTokenRequest(_clientId, appSecret, code);
             var gitHubClient = new GitHubClient(new ProductHeaderValue("JitHubV3"));
             token = await gitHubClient.Oauth.CreateAccessToken(request);
+            gitHubClient.Credentials = new Credentials(token.AccessToken);
+            var user = await gitHubClient.User.Current();
+            _userId = user.Id;
         }
         catch (Exception ex)
         {

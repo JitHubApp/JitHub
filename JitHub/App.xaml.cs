@@ -67,6 +67,7 @@ public partial class App : Application
     private void HandleActivation(AppActivationArguments activatedEventArgs)
     {
         var navigationService = ServiceProvider.GetService<INavigationService>();
+        var accountService = ServiceProvider.GetService<IAccountService>();
         ((NavigationService)navigationService).Init(((MainWindow)m_window).GetRootFrame());
 
         var authenticated = false;
@@ -82,13 +83,11 @@ public partial class App : Application
             string userId = queryParameters["userId"];
             long userIdVal;
             long.TryParse(userId, out userIdVal);
-
-            var accountService = ServiceProvider.GetService<IAccountService>();
+            
             authenticated = accountService.Authorize(token, clientId, userIdVal);
         }
         else
         {
-            var accountService = ServiceProvider.GetService<IAccountService>();
             authenticated = accountService.Authenticated;
         }
 

@@ -15,10 +15,16 @@ public struct Repo
 
 public sealed class GitHubService : IGitHubService
 {
-    private string _token;
-    public GitHubService(string token)
+    private Connection? _connection;
+    public GitHubService(IAccountService accountService)
     {
-        _token = token;
+        accountService.RegisterAuthorizitableService(Authorize);
+    }
+
+    private void Authorize(string token)
+    {
+        var productInformation = new ProductHeaderValue("JitHub", "V3");
+        _connection = new Connection(productInformation, token);
     }
 
     public async Task<Repo> GetRepo(string @params)
@@ -31,9 +37,6 @@ public sealed class GitHubService : IGitHubService
 
     public async Task<Repo> GetRepo(string owner, string name)
     {
-        var productInformation = new ProductHeaderValue("JitHub", "V3");
-        var connection = new Connection(productInformation, _token);
-
         var query = new Query()
             .RepositoryOwner(Var("owner"))
             .Repository(Var("name"))
@@ -52,7 +55,7 @@ public sealed class GitHubService : IGitHubService
             { "name",  name },
         };
 
-        var result = await connection.Run(query, vars);
+        var result = await _connection.Run(query, vars);
         return new()
         {
             Id = result.Id,

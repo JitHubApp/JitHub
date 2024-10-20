@@ -1,5 +1,7 @@
 ﻿namespace JitHub.Services.Interfaces;
 
+public delegate void AuthorizeService(string token);
+
 public interface IAccountService
 {
     bool Authenticated { get; set; }
@@ -11,4 +13,5 @@ public interface IAccountService
     string GetToken(long userId);
     bool CheckAuth(long userId);
     void SignOut();
+    void RegisterAuthorizitableService(AuthorizeService authorize);
 }

@@ -17,16 +17,16 @@ public sealed partial class MainWindow : Window
         {
             return;
         }
-        var githubService = new GitHubService(token);
-        var input = RepoInput.Text;
-        var textParts = input.Split('/');
-        var owner = textParts[0];
-        var name = textParts[1];
-        var repo = await githubService.GetRepo(owner, name);
-        Id.Text = repo.Id.ToString();
-        Owner.Text = repo.Owner;
-        Name.Text = repo.Name;
-        IsFork.Text = repo.IsFork ? "Fork" : "Original";
-        IsPrivate.Text = repo.IsPrivate ? "Private" : "Public";
+        //var githubService = new GitHubService(token);
+        //var input = RepoInput.Text;
+        //var textParts = input.Split('/');
+        //var owner = textParts[0];
+        //var name = textParts[1];
+        //var repo = await githubService.GetRepo(owner, name);
+        //Id.Text = repo.Id.ToString();
+        //Owner.Text = repo.Owner;
+        //Name.Text = repo.Name;
+        //IsFork.Text = repo.IsFork ? "Fork" : "Original";
+        //IsPrivate.Text = repo.IsPrivate ? "Private" : "Public";
     }
 }

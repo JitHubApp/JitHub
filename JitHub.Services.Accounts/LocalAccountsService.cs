@@ -16,7 +16,8 @@ public partial class LocalAccountService : ObservableObject, IAccountService
     private INavigationService _navigationService;
     private PasswordVault _passwordVault;
     private static string userIdKey = "USER_ID";
-    public static string doNotWarnDeleteRepoKey = "DO_NOT_WARN_DELETE_REPO";
+    private static string doNotWarnDeleteRepoKey = "DO_NOT_WARN_DELETE_REPO";
+    private AuthorizeService _authorize;
     public LocalAccountService(ISettingsService settingsService, INavigationService navigationService)
     {
         _settingsService = settingsService;
@@ -52,6 +53,7 @@ public partial class LocalAccountService : ObservableObject, IAccountService
             _passwordVault.Add(new PasswordCredential(clientId, userId.ToString(), token));
             SaveUser(userId);
             Authenticated = true;
+            _authorize?.Invoke(token);
         }
         catch
         {
@@ -107,5 +109,10 @@ public partial class LocalAccountService : ObservableObject, IAccountService
         // TODO: This is temp URL, need to change to config
         var url = $"https://localhost:7040/authenticate?scopes={string.Join(';', scopes)}";
         await Windows.System.Launcher.LaunchUriAsync(new(url));
+    }
+
+    public void RegisterAuthorizitableService(AuthorizeService authorize)
+    {
+        _authorize = authorize;
     }
 }

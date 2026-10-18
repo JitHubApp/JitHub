@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JitHub.Web.Client\JitHub.Web.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
-    <PackageReference Include="Octokit" Version="13.0.1" />
+    <PackageReference Include="Octokit" Version="14.0.0" />
   </ItemGroup>
 
 </Project>

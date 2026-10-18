@@ -25,13 +25,13 @@ public class SLMSession : IDisposable
         var sequences = _tokenizer.Encode(templatedPrompt);
         using GeneratorParams generatorParams = new GeneratorParams(_model);
         generatorParams.SetSearchOption("max_length", 800);
-        generatorParams.SetInputSequences(sequences);
         generatorParams.TryGraphCaptureWithMaxBatchSize(1);
         using var tokenizerStream = _tokenizer.CreateStream();
         using var generator = new Generator(_model, generatorParams);
         while (!generator.IsDone())
         {
-            generator.ComputeLogits();
+            generator.AppendTokenSequences(sequences);
+            //generator.ComputeLogits();
             generator.GenerateNextToken();
             WriteNextToken(tokenizerStream.Decode(generator.GetSequence(0)[^1]));
         }
